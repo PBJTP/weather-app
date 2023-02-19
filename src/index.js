@@ -4,6 +4,9 @@
         data: {
             //Data stored here
         },
+        init: function() {
+            this.getData('seattle')
+        },
         //get data and assign to data object
         getData: async function (location) {
             const x = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${location}&appid=2ce4c90e826af0f3a3f83a9bf293c425`, {mode: "cors"});
@@ -18,9 +21,8 @@
             this.data.windDirection = y.wind.deg;
             this.data.report = y.weather[0].description;
 
-            console.log(y);
-            console.log(this.data)
             this.render();
+            this.addListener();
         },
         //convert kelvin temp to farenheit
         getTempF: function (temp) {
@@ -34,6 +36,7 @@
         getWindDirection: function () {
             //do stuff with the degrees from openweather data
         },
+        //Grab HTML elements and render data to DOM
         render: function () {
             const domLocation = document.getElementById('location');
             const domTempF = document.getElementById('tempF');
@@ -54,13 +57,17 @@
             domWindSpeed.textContent = this.data.windSpeed;
             domWindDirection.textContent = this.data.windDirection;
             domReport.textContent = this.data.report;
-        }
+        },
+        //Add listener and search function to the form
+        addListener: function() {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                const userSearch = new FormData(form).get('search');
+                this.getData(userSearch);
+                form.reset();
+            });
+        },
     }
-
-    //testing functions and data assignment
-    weather.getData('cairo');
-    console.log(weather.data);
-
+    weather.init();
 })();
-
-console.log(new Date());
